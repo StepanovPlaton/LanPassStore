@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: lanpass_postgres
-    build: ./database
+    image: docker.io/postgres:18
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
@@ -17,7 +17,7 @@ services:
 
   pgadmin:
     container_name: lanpass_pgadmin
-    image: dpage/pgadmin4
+    image: docker.io/dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?}
