@@ -9,8 +9,7 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./backend/admin-panel-db/init.sql:/docker-entrypoint-initdb.d/init-admin-panel.sql
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init-admin-panel.sql
     networks:
       - backend_net
     restart: always
@@ -31,7 +30,9 @@ services:
 
   backend:
     container_name: lanpass_backend
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     environment:
       DB_HOST: lanpass_postgres
       DB_PORT: 5432
@@ -57,8 +58,8 @@ services:
       context: ./frontend
       args:
         VITE_APP_PHONE: ${PHONE:?}
-        BACKEND_DOMAIN: lanpass_backend
-        BACKEND_PORT: ${BACKEND_PORT:-8080}
+        BACKEND_DOMAIN: localhost
+        BACKEND_PORT: 8080
         API_PATTERN: api
     networks:
       - frontend_net
