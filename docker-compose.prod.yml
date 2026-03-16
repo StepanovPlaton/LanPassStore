@@ -1,0 +1,48 @@
+services:
+  # Переопределяем только нужные части существующих сервисов
+  backend:
+    # Образ backend из GitHub Container Registry
+    image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-backend:latest
+
+  frontend:
+    # Образ frontend из GitHub Container Registry
+    image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-frontend:latest
+
+  # Продовый nginx с SSL, envsubst и томами certbot
+  nginx:
+    environment:
+      - DOMAIN=${DOMAIN:?}
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.prod.conf.template:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    command: >
+      sh -c "envsubst '\${DOMAIN}' < /etc/nginx/nginx.prod.conf.template > /tmp/nginx.conf
+      && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # Certbot для получения/обновления сертификатов
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+    command: >-
+      certonly --webroot -w /var/www/certbot
+      -d ${DOMAIN:?}
+      --email ${LETSENCRYPT_EMAIL:?}
+      --agree-tos
+      --non-interactive
+
+  # Watchtower для автообновления контейнеров
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 300
+
+volumes:
+  certbot-etc:
+  certbot-www:

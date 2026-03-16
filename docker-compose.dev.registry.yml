@@ -1,0 +1,8 @@
+services:
+  backend:
+    image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-backend:latest
+    build: null
+
+  frontend:
+    image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-frontend:latest
+    build: null
