@@ -1,0 +1,23 @@
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+
+# Virtual environments 
+venv/
+env/
+
+# IDE and editor files (.vscode, .idea - not needed in production!)
+.vscode*
+.idea*
+
+# Tests (*.test.py), documentation  
+tests/*
+docs/*
+
+# Git repository (not copied during Docker build)
+.git/*
+
+
+CI/CD scripts
+.dockerignore

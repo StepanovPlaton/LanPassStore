@@ -14,37 +14,24 @@ services:
       - backend_net
     restart: always
 
-  pgadmin:
-    container_name: lanpass_pgadmin
-    image: docker.io/dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?}
-      PGADMIN_LISTEN_PORT: 2222
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    networks:
-      - backend_net
-    restart: always
-
   backend:
     container_name: lanpass_backend
     build:
       context: .
       dockerfile: backend/Dockerfile
     environment:
-      DB_HOST: lanpass_postgres
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: ${POSTGRES_USER:?}
       DB_PASSWORD: ${POSTGRES_PASSWORD:?}
       DB_NAME: ${POSTGRES_DB:?}
-      JWT_SECRET: ${JWT_SECRET:?}
+      SECRET: ${SECRET:?}
       ADMIN_LOGIN: ${ADMIN_LOGIN:?}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?}
       ROOT_API_TOKEN: ${ROOT_API_TOKEN:?}
       ROOT_API_URL: ${ROOT_API_URL:?}
       SYNC_INTERVAL_HOURS: ${BACKEND_AUTOUPDATE:?}
+      BOT_WEBHOOK_URL: ${BOT_WEBHOOK_URL:?}
       PORT: ${BACKEND_PORT:-8080}
     networks:
       - backend_net
@@ -78,6 +65,25 @@ services:
     depends_on:
       - backend
       - frontend
+    restart: unless-stopped
+
+  tgbot:
+    container_name: lanpass_tgbot
+    build:
+      context: ./tgbot
+      dockerfile: Dockerfile
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:?}
+      CHAT_IDS: ${CHAT_IDS:?}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:?}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?}
+      SECRET: ${SECRET:?} 
+      API_HOST: backend
+      API_PORT: ${BACKEND_PORT:-8080}
+    networks:
+      - backend_net
+    depends_on:
+      - backend
     restart: unless-stopped
 
 networks:

@@ -1,14 +1,10 @@
 services:
-  # Переопределяем только нужные части существующих сервисов
   backend:
-    # Образ backend из GitHub Container Registry
     image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-backend:latest
 
   frontend:
-    # Образ frontend из GitHub Container Registry
     image: ghcr.io/${GHCR_REPOSITORY?-set-in-.env}-frontend:latest
 
-  # Продовый nginx с SSL, envsubst и томами certbot
   nginx:
     environment:
       - DOMAIN=${DOMAIN:?}
@@ -23,7 +19,6 @@ services:
       - "80:80"
       - "443:443"
 
-  # Certbot для получения/обновления сертификатов
   certbot:
     image: certbot/certbot
     volumes:
@@ -36,7 +31,6 @@ services:
       --agree-tos
       --non-interactive
 
-  # Watchtower для автообновления контейнеров
   watchtower:
     image: containrrr/watchtower
     volumes:
