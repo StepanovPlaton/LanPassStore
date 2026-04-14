@@ -31,7 +31,7 @@ services:
       --email ${LETSENCRYPT_EMAIL:?}
       --agree-tos
       --non-interactive
-      --keep-until-expiring # Не обновлять, если сертификат еще действителен
+      --keep-until-expiring
 
   watchtower:
     image: containrrr/watchtower
