@@ -9,27 +9,29 @@ services:
     environment:
       - DOMAIN=${DOMAIN:?}
     volumes:
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.prod.conf.template:ro
+      - ./nginx/nginx.prod.conf:/etc/nginx/templates/nginx.conf.template:ro
       - certbot-etc:/etc/letsencrypt
       - certbot-www:/var/www/certbot
-    command: >
-      sh -c "envsubst '\${DOMAIN}' < /etc/nginx/nginx.prod.conf.template > /tmp/nginx.conf
-      && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - certbot
+    restart: unless-stopped
 
   certbot:
     image: certbot/certbot
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-www:/var/www/certbot
+    restart: on-failure 
     command: >-
       certonly --webroot -w /var/www/certbot
       -d ${DOMAIN:?}
       --email ${LETSENCRYPT_EMAIL:?}
       --agree-tos
       --non-interactive
+      --keep-until-expiring # Не обновлять, если сертификат еще действителен
 
   watchtower:
     image: containrrr/watchtower
