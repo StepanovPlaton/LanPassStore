@@ -45,8 +45,8 @@ services:
       context: ./frontend
       args:
         VITE_APP_PHONE: ${PHONE:?}
-        BACKEND_DOMAIN: localhost
-        BACKEND_PORT: 8080
+        BACKEND_DOMAIN: ${DOMAIN:-localhost} 
+        BACKEND_PORT: ${BACKEND_PORT:-8080}
         API_PATTERN: api
     networks:
       - frontend_net
