@@ -85,3 +85,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+          build-args: |
+            VITE_APP_PHONE=${{ vars.VITE_APP_PHONE }}
+            BACKEND_DOMAIN=${{ vars.BACKEND_DOMAIN }}
+            BACKEND_PORT=${{ vars.BACKEND_PORT }}
+            API_PATTERN=api
