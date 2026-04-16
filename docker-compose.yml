@@ -32,7 +32,7 @@ services:
       ROOT_API_URL: ${ROOT_API_URL:?}
       SYNC_INTERVAL_HOURS: ${BACKEND_AUTOUPDATE:?}
       BOT_WEBHOOK_URL: ${BOT_WEBHOOK_URL:?}
-      PORT: ${BACKEND_PORT:-8080}
+      PORT: ${BACKEND_PORT:-8000}
     networks:
       - backend_net
     depends_on:
@@ -46,7 +46,7 @@ services:
       args:
         VITE_APP_PHONE: ${PHONE:?}
         BACKEND_DOMAIN: ${DOMAIN:-localhost} 
-        BACKEND_PORT: ${BACKEND_PORT:-8080}
+        BACKEND_PORT: ${NGINX_PORT:-8080}
         API_PATTERN: api
     networks:
       - frontend_net
@@ -79,7 +79,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?}
       SECRET: ${SECRET:?} 
       API_HOST: backend
-      API_PORT: ${BACKEND_PORT:-8080}
+      API_PORT: ${BACKEND_PORT:-8000}
     networks:
       - backend_net
     depends_on:
